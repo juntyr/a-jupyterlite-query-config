@@ -17,7 +17,9 @@ test('should emit an activation console message', async ({ page }) => {
 
   expect(
     logs.filter(
-      s => s === 'JupyterLite server extension a-jupyterlite-query-config is activated!'
+      s =>
+        s ===
+        'JupyterLite server extension a-jupyterlite-query-config is activated!'
     )
   ).toHaveLength(1);
 });

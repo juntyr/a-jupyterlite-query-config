@@ -24,7 +24,9 @@ const plugin: JupyterLiteServerPlugin<void> = {
     );
 
     const config =
-      JSON.parse(PageConfig.getOption('litePluginSettings') || '{}')[PLUGIN_ID] || {};
+      JSON.parse(PageConfig.getOption('litePluginSettings') || '{}')[
+        PLUGIN_ID
+      ] || {};
     const overrides: Record<string, string> = config.overrides || {};
 
     const searchParams = new URL(window.location.href).searchParams;
@@ -35,7 +37,7 @@ const plugin: JupyterLiteServerPlugin<void> = {
         continue;
       }
 
-      const [key, ...keys] = path.split(".");
+      const [key, ...keys] = path.split('.');
 
       if (keys.length === 0) {
         PageConfig.setOption(key, value);
@@ -46,7 +48,7 @@ const plugin: JupyterLiteServerPlugin<void> = {
       let curr = option;
 
       for (const [i, k] of keys.entries()) {
-        if (i < (keys.length - 1)) {
+        if (i < keys.length - 1) {
           if (curr[k] === undefined) {
             curr[k] = {};
           }
