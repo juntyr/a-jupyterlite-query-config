@@ -4,7 +4,8 @@ import {
   JupyterLiteServerPlugin
 } from '@jupyterlite/server';
 
-export * as CONFIG_SETTINGS_SCHEMA from '../schema/config.v0.schema.json';
+import * as schema from '../schema/config.v0.schema.json';
+export const CONFIG_SETTINGS_SCHEMA = JSON.stringify(schema);
 
 /**
  * The id for the extension, and key in the litePlugins.

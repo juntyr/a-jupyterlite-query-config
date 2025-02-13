@@ -12,7 +12,7 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "preserveWatchOutput": true,
-    "resolveJsonModule": false,
+    "resolveJsonModule": true,
     "outDir": "lib",
     "rootDir": "src",
     "strict": true,
