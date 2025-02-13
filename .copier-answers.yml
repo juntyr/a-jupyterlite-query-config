@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.3.5
+_src_path: https://github.com/jupyterlab/extension-template
+author_email: juniper.tyree@helsinki.fi
+author_name: Juniper Tyree
+has_binder: false
+has_settings: false
+kind: frontend
+labextension_name: a-jupyterlite-query-config
+project_short_description: A JupyterLab extension.
+python_name: a-jupyterlite-query-config
+repository: https://github.com/juntyr/a-jupyterlite-query-config
+test: false
+

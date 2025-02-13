@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://github.com/juntyr/a-jupyterlite-query-config.git",
+  "title": "JupyterLite Query Config Settings Schema v0",
+  "description": "Override JupyterLite configuration values with URL query paramters",
+  "type": "object",
+  "properties": {
+    "overrides": {
+      "description": "Mapping from URL query parameter names to configuration paths",
+      "type": "object",
+      "default": {},
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}
