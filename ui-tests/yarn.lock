@@ -950,15 +950,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"a-jupyterlite-query-config-ui-tests@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "a-jupyterlite-query-config-ui-tests@workspace:."
-  dependencies:
-    "@jupyterlab/galata": ^5.0.5
-    "@playwright/test": ^1.37.0
-  languageName: unknown
-  linkType: soft
-
 "@lezer/common@npm:^1.0.0, @lezer/common@npm:^1.0.2, @lezer/common@npm:^1.1.0":
   version: 1.1.2
   resolution: "@lezer/common@npm:1.1.2"
@@ -1792,6 +1783,15 @@ __metadata:
   checksum: 1c8a3d6dba035674a9b4ec1b2f5e98d75170fe86cd98cf3d05cdced40d0ee0c3371f3d291516a1903f70cc5a9beadb70048d1ffc71a778bca6767bbeecb716ab
   languageName: node
   linkType: hard
+
+"a-jupyterlite-query-config-ui-tests@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "a-jupyterlite-query-config-ui-tests@workspace:."
+  dependencies:
+    "@jupyterlab/galata": ^5.0.5
+    "@playwright/test": ^1.37.0
+  languageName: unknown
+  linkType: soft
 
 "abbrev@npm:^2.0.0":
   version: 2.0.0

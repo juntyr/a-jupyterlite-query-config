@@ -1,8 +1,8 @@
-import { PageConfig } from '@jupyterlab/coreutils';
 import {
-  JupyterLiteServer,
-  JupyterLiteServerPlugin
-} from '@jupyterlite/server';
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin
+} from '@jupyterlab/application';
+import { PageConfig } from '@jupyterlab/coreutils';
 
 /**
  * The id for the extension, and key in the litePlugins.
@@ -12,13 +12,13 @@ const PLUGIN_ID = 'a-jupyterlite-query-config:plugin';
 /**
  * Initialization data for the a-jupyterlite-query-config extension.
  */
-const plugin: JupyterLiteServerPlugin<void> = {
+const plugin: JupyterFrontEndPlugin<void> = {
   id: PLUGIN_ID,
   autoStart: true,
   requires: [],
-  activate: (_app: JupyterLiteServer) => {
+  activate: (_app: JupyterFrontEnd) => {
     console.log(
-      'JupyterLite server extension a-jupyterlite-query-config is activated!'
+      'JupyterLite extension a-jupyterlite-query-config is activated!'
     );
 
     const config =
