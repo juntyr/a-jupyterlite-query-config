@@ -53,7 +53,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         );
       }
 
-      const concat = '$conat' as keyof typeof patch;
+      const concat = '$concat' as keyof typeof patch;
       if (Object.prototype.hasOwnProperty.call(patch, concat)) {
         if (Object.keys(patch).length !== 1) {
           throw new SyntaxError(`${concat} must be the only key`);
