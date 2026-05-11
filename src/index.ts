@@ -29,20 +29,88 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
     const searchParams = new URL(window.location.href).searchParams;
 
+    function mergeJson(prev, patch) {
+      let patchType = Array.isArray(patch) ? 'array' : typeof patch;
+
+      if (
+        patch === null ||
+        ['string', 'number', 'boolean'].includes(patchType)
+      ) {
+        return patch;
+      }
+
+      const prevType = Array.isArray(prev) ? 'array' : typeof prev;
+
+      if (patchType === 'array') {
+        return patch.map((e, i) => mergeJson(prev[i], e));
+      }
+
+      const patchKeys = Object.keys(patch);
+
+      if (patchKeys.includes('$concat')) {
+        if (patchKeys.length !== 1) {
+          throw new SyntaxError('$concat must be the only key');
+        }
+        patch = patch['$concat'];
+        patchType = Array.isArray(patch) ? 'array' : typeof patch;
+        if (prevType !== 'array' || patchType !== 'array') {
+          throw new TypeError('can only $concat two arrays');
+        }
+        return [...prev, ...[patch.map(e => mergeJson(undefined, e))]];
+      }
+
+      if (patchKeys.includes('$override')) {
+        if (patchKeys.length !== 1) {
+          throw new SyntaxError('$override must be the only key');
+        }
+        patch = patch['$override'];
+        patchType = Array.isArray(patch) ? 'array' : typeof patch;
+        if (prevType !== 'object' || patchType !== 'object') {
+          throw new TypeError(
+            'can only $override one object with another object'
+          );
+        }
+        return {
+          ...prev,
+          ...Object.entries(patch).reduce(function (obj, [k, e]) {
+            obj[k] = mergeJson(undefined, e);
+            return obj;
+          }, {})
+        };
+      }
+
+      return Object.entries(patch).reduce(function (obj, [k, e]) {
+        if (k.startsWith('$')) {
+          throw new SyntaxError(`unknown merge operator '${k}'`);
+        }
+        obj[k] = mergeJson(prev[k], e);
+        return obj;
+      }, {});
+
+      return patch.map((e, i) => mergeJson(prev[i], e));
+    }
+
     for (const [query, path] of Object.entries(overrides)) {
-      const value = searchParams.get(query);
+      const value = JSON.parse(searchParams.get(query));
       if (value === null) {
         continue;
       }
 
       const [key, ...keys] = path.split('.');
 
+      const option = JSON.parse(PageConfig.getOption(key));
+
       if (keys.length === 0) {
-        PageConfig.setOption(key, value);
+        try {
+          PageConfig.setOption(key, JSON.stringify(mergeJson(option, value)));
+        } catch (err) {
+          console.error(
+            `failed to apply JupyterLite query config '${key}'=${value}: ${err}`
+          );
+        }
         continue;
       }
 
-      const option = JSON.parse(PageConfig.getOption(key));
       let curr = option;
 
       for (const [i, k] of keys.entries()) {
@@ -52,7 +120,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
           }
           curr = curr[k];
         } else {
-          curr[k] = JSON.parse(value);
+          try {
+            curr[k] = mergeJson(curr[k], value);
+          } catch (err) {
+            console.error(
+              `failed to apply JupyterLite query config '${key}'=${value}: ${err}`
+            );
+          }
         }
       }
 
