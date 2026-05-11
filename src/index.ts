@@ -29,65 +29,87 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
     const searchParams = new URL(window.location.href).searchParams;
 
-    function mergeJson(prev, patch) {
-      let patchType = Array.isArray(patch) ? 'array' : typeof patch;
+    type TSON =
+      | null
+      | string
+      | number
+      | boolean
+      | { [key: string]: TSON }
+      | TSON[];
 
+    function mergeJson(prev: undefined | TSON, patch: TSON): TSON {
       if (
         patch === null ||
-        ['string', 'number', 'boolean'].includes(patchType)
+        typeof patch === 'string' ||
+        typeof patch === 'number' ||
+        typeof patch === 'boolean'
       ) {
         return patch;
       }
 
-      const prevType = Array.isArray(prev) ? 'array' : typeof prev;
-
-      if (patchType === 'array') {
-        return patch.map((e, i) => mergeJson(prev[i], e));
+      if (Array.isArray(patch)) {
+        return patch.map((e, i) =>
+          mergeJson(Array.isArray(prev) ? prev[i] : undefined, e)
+        );
       }
 
-      const patchKeys = Object.keys(patch);
-
-      if (patchKeys.includes('$concat')) {
-        if (patchKeys.length !== 1) {
-          throw new SyntaxError('$concat must be the only key');
+      const concat = '$conat' as keyof typeof patch;
+      if (patch.hasOwnProperty(concat)) {
+        if (Object.keys(patch).length !== 1) {
+          throw new SyntaxError(`${concat} must be the only key`);
         }
-        patch = patch['$concat'];
-        patchType = Array.isArray(patch) ? 'array' : typeof patch;
-        if (prevType !== 'array' || patchType !== 'array') {
-          throw new TypeError('can only $concat two arrays');
+        patch = patch[concat];
+        if (!Array.isArray(prev) || !Array.isArray(patch)) {
+          throw new TypeError(`can only ${concat} two arrays`);
         }
         return [...prev, ...[patch.map(e => mergeJson(undefined, e))]];
       }
 
-      if (patchKeys.includes('$override')) {
-        if (patchKeys.length !== 1) {
-          throw new SyntaxError('$override must be the only key');
+      const override_ = '$override' as keyof typeof patch;
+      if (patch.hasOwnProperty(override_)) {
+        if (Object.keys(patch).length !== 1) {
+          throw new SyntaxError(`${override_} must be the only key`);
         }
-        patch = patch['$override'];
-        patchType = Array.isArray(patch) ? 'array' : typeof patch;
-        if (prevType !== 'object' || patchType !== 'object') {
+        patch = patch[override_];
+        if (
+          prev === null ||
+          typeof prev !== 'object' ||
+          Array.isArray(prev) ||
+          patch === null ||
+          typeof patch !== 'object' ||
+          Array.isArray(patch)
+        ) {
           throw new TypeError(
-            'can only $override one object with another object'
+            `can only ${override_} one object with another object`
           );
         }
         return {
           ...prev,
-          ...Object.entries(patch).reduce((obj, [k, e]) => {
-            obj[k] = mergeJson(undefined, e);
-            return obj;
-          }, {})
+          ...Object.entries(patch).reduce(
+            (obj: { [key: string]: TSON }, [k, e]) => {
+              obj[k] = mergeJson(undefined, e);
+              return obj;
+            },
+            {}
+          )
         };
       }
 
-      return Object.entries(patch).reduce((obj, [k, e]) => {
-        if (k.startsWith('$')) {
-          throw new SyntaxError(`unknown merge operator '${k}'`);
-        }
-        obj[k] = mergeJson(prev[k], e);
-        return obj;
-      }, {});
-
-      return patch.map((e, i) => mergeJson(prev[i], e));
+      return Object.entries(patch).reduce(
+        (obj: { [key: string]: TSON }, [k, e]) => {
+          if (k.startsWith('$')) {
+            throw new SyntaxError(`unknown merge operator '${k}'`);
+          }
+          obj[k] = mergeJson(
+            prev === null || typeof prev !== 'object' || Array.isArray(prev)
+              ? undefined
+              : prev[k],
+            e
+          );
+          return obj;
+        },
+        {}
+      );
     }
 
     for (const [query, path] of Object.entries(overrides)) {
