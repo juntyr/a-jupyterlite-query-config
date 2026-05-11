@@ -72,14 +72,14 @@ const plugin: JupyterFrontEndPlugin<void> = {
         }
         return {
           ...prev,
-          ...Object.entries(patch).reduce(function (obj, [k, e]) {
+          ...Object.entries(patch).reduce((obj, [k, e]) => {
             obj[k] = mergeJson(undefined, e);
             return obj;
           }, {})
         };
       }
 
-      return Object.entries(patch).reduce(function (obj, [k, e]) {
+      return Object.entries(patch).reduce((obj, [k, e]) => {
         if (k.startsWith('$')) {
           throw new SyntaxError(`unknown merge operator '${k}'`);
         }
