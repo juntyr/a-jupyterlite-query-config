@@ -54,7 +54,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
 
       const concat = '$conat' as keyof typeof patch;
-      if (patch.hasOwnProperty(concat)) {
+      if (Object.prototype.hasOwnProperty.call(patch, concat)) {
         if (Object.keys(patch).length !== 1) {
           throw new SyntaxError(`${concat} must be the only key`);
         }
@@ -66,7 +66,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       }
 
       const override_ = '$override' as keyof typeof patch;
-      if (patch.hasOwnProperty(override_)) {
+      if (Object.prototype.hasOwnProperty.call(patch, override_)) {
         if (Object.keys(patch).length !== 1) {
           throw new SyntaxError(`${override_} must be the only key`);
         }
