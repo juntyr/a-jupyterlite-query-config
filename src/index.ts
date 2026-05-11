@@ -62,7 +62,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         if (!Array.isArray(prev) || !Array.isArray(patch)) {
           throw new TypeError(`can only ${concat} two arrays`);
         }
-        return [...prev, ...[patch.map(e => mergeJson(undefined, e))]];
+        return [...prev, ...patch.map(e => mergeJson(undefined, e))];
       }
 
       const override_ = '$override' as keyof typeof patch;
