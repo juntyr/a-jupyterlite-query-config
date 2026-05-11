@@ -113,14 +113,16 @@ const plugin: JupyterFrontEndPlugin<void> = {
     }
 
     for (const [query, path] of Object.entries(overrides)) {
-      const value = JSON.parse(searchParams.get(query));
-      if (value === null) {
+      const value_ = searchParams.get(query);
+      if (value_ === null) {
         continue;
       }
+      const value = JSON.parse(value_);
 
       const [key, ...keys] = path.split('.');
 
-      const option = JSON.parse(PageConfig.getOption(key));
+      const option_ = PageConfig.getOption(key);
+      const option = option_ === '' ? {} : JSON.parse(option_);
 
       if (keys.length === 0) {
         try {
